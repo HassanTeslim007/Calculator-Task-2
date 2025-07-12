@@ -76,10 +76,6 @@ lib/
 
 Contributions are welcome! Open issues, submit PRs, or suggest features.
 
-## 📄 License
-
-This project is licensed under the MIT License.
-
 ---
 
 Built with ❤️ using Flutter.
