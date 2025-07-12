@@ -25,8 +25,9 @@ A modern and responsive calculator built with Flutter. This app supports basic a
 * **Visual Feedback**: Themed buttons with animations
 
 ## 📱 Screenshots
+<img width="500" height="689" alt="Screenshot 2025-07-12 at 2 19 08 PM" src="https://github.com/user-attachments/assets/d3ba7b2d-5903-4b07-80c9-81ae1e5ec079" />
+<img width="398" height="644" alt="Screenshot 2025-07-12 at 2 19 30 PM" src="https://github.com/user-attachments/assets/f86e9b55-38bf-4c76-bca9-33ab9d8713a4" />
 
-*Add your screenshots here to showcase UI and features.*
 
 ## 🚀 Getting Started
 
@@ -55,8 +56,8 @@ lib/
 
 * The app uses a `StatefulWidget` to manage internal states like expression, result, memory, and history.
 * User inputs are parsed and evaluated using custom logic (including operator precedence).
-* Memory values persist in runtime using a `double _memory` variable.
-* Tapping `H` toggles the history panel.
+* Memory values persist in runtime .
+
 
 ## 📌 Usage Notes
 
@@ -74,10 +75,6 @@ lib/
 ## 🤝 Contributions
 
 Contributions are welcome! Open issues, submit PRs, or suggest features.
-
-## 📄 License
-
-This project is licensed under the MIT License.
 
 ---
 
