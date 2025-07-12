@@ -1,9 +1,9 @@
-
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:myapp/core/colors.dart';
 import 'package:myapp/core/utils.dart';
+import 'package:myapp/history_screen.dart';
 
 class CalculatorScreen extends StatefulWidget {
   const CalculatorScreen({super.key});
@@ -20,6 +20,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
   bool waitingForNext = false;
   double memory = 0.0;
   bool hasMemory = false;
+  List<String> history = [];
 
   void _onButtonPressed(String buttonText) {
     setState(() {
@@ -66,6 +67,9 @@ class CalculatorScreenState extends State<CalculatorScreen> {
         case 'M-':
           _memorySubtract();
           break;
+        case 'History':
+          _showHistory();
+          break;
         case '.':
           _decimal();
           break;
@@ -100,30 +104,58 @@ class CalculatorScreenState extends State<CalculatorScreen> {
 
   void _percentage() {
     double value = double.parse(display);
-    display = (value / 100).toString();
-   formatDisplay(display);
+    double result = value / 100;
+
+    // Add to history
+    String historyEntry = '${formatNumber(value)}% = ${formatNumber(result)}';
+    _addToHistory(historyEntry);
+
+    display = result.toString();
+    formatDisplay(display);
   }
 
   void _squareRoot() {
     double value = double.parse(display);
     if (value >= 0) {
-      display = math.sqrt(value).toString();
-     formatDisplay(display);
+      double result = math.sqrt(value);
+
+      // Add to history
+      String historyEntry = '√${formatNumber(value)} = ${formatNumber(result)}';
+      _addToHistory(historyEntry);
+
+      display = result.toString();
+      formatDisplay(display);
+    } else {
+      display = 'Error';
     }
   }
 
   void _reciprocal() {
     double value = double.parse(display);
-    if (value != 0) {
-      display = (1 / value).toString();
-     formatDisplay(display);
+     if (value != 0) {
+      double result = 1 / value;
+      
+      // Add to history
+      String historyEntry = '1/${formatNumber(value)} = ${formatNumber(result)}';
+      _addToHistory(historyEntry);
+      
+      display = result.toString();
+      formatDisplay(display);
+    } else {
+      display = 'Error';
     }
   }
 
   void _square() {
     double value = double.parse(display);
-    display = (value * value).toString();
-   formatDisplay(display);
+      double result = value * value;
+    
+    // Add to history
+    String historyEntry = '${formatNumber(value)}² = ${formatNumber(result)}';
+    _addToHistory(historyEntry);
+    
+    display = result.toString();
+    formatDisplay(display);
   }
 
   void _operation(String op) {
@@ -140,6 +172,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     if (previousValue != null && operation != null) {
       double current = double.parse(display);
       double result = 0;
+      String operationSymbol = operation!;
 
       switch (operation) {
         case '+':
@@ -161,8 +194,13 @@ class CalculatorScreenState extends State<CalculatorScreen> {
           break;
       }
 
+      // Add to history
+      String historyEntry =
+          '${formatNumber(previousValue!)} $operationSymbol ${formatNumber(current)} = ${formatNumber(result)}';
+      _addToHistory(historyEntry);
+
       display = result.toString();
-     formatDisplay(display);
+      formatDisplay(display);
       previousValue = null;
       operation = null;
       previousDisplay = '';
@@ -177,7 +215,7 @@ class CalculatorScreenState extends State<CalculatorScreen> {
 
   void _memoryRecall() {
     display = memory.toString();
-   formatDisplay(display);
+    formatDisplay(display);
     waitingForNext = true;
   }
 
@@ -209,10 +247,61 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     }
   }
 
+  void _showHistory() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.grey[900],
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder:
+          (context) => HistorySheet(
+            history: history,
+            onClearHistory: () {
+              setState(() {
+                history.clear();
+              });
+              Navigator.pop(context);
+            },
+            onSelectHistoryItem: (String calculation) {
+              // Extract the result from the calculation string
+              List<String> parts = calculation.split(' = ');
+              if (parts.length == 2) {
+                setState(() {
+                  display = parts[1];
+                  waitingForNext = true;
+                });
+              }
+              Navigator.pop(context);
+            },
+          ),
+    );
+  }
+
+  void _addToHistory(String entry) {
+    setState(() {
+      history.insert(0, entry);
+      if (history.length > 20) {
+        history.removeLast();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: Text('Calculator'),
+        backgroundColor: Colors.grey[900],
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: () => _onButtonPressed('History'),
+            tooltip: 'History',
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // Display Area
@@ -366,4 +455,3 @@ class CalculatorScreenState extends State<CalculatorScreen> {
     onPressed: (text) => _onButtonPressed(text),
   );
 }
-

@@ -41,3 +41,11 @@ Widget calculatorButton(String text, Color color, {int flex = 1, void Function(S
       display = value.toString();
     }
   }
+
+    String formatNumber(double number) {
+    if (number == number.roundToDouble()) {
+      return number.toInt().toString();
+    } else {
+      return number.toString();
+    }
+  }
